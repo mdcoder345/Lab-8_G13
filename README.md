@@ -132,13 +132,71 @@ Test Result:
 ![image](https://user-images.githubusercontent.com/75557009/233432208-630953a7-c29e-4605-af42-a5be54046547.png)
 As we can see that it shows error while registration beacuse of confirmedPassword is not matching password.
 
-Below is the code for verification of added courses and their descriptions.
+Below is the code for verification of add,remove and update courses and their descriptions.
+
+```
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../index');
+const expect = chai.expect;
+const should = chai.should();
+chai.use(chaiHttp);
 
 
+describe("Course",()=>{
+    //add course module
+    describe("POST /courses",()=>{
+        it("it should add course",(done)=>{
+            chai
+            .request(app)
+            .get("/courses")
+            .end((err,res)=>{
+                console.log(res);
+                res.statusCode.should.equal(200);
+                res.body.should.be.a('object');
+                done();
+            })
+        })
+    })
 
-Here also, we have taken two testcases which are listed below along with their output.
+    //update course
+    describe("PATCH /courses/:id",()=>{
+        it("it should update course",(done)=>{
+            chai
+            .request(app)
+            .patch("/courses/:id")
+            .send({
+                courseName:"DSA",
+                courseDescription:"Data Structures and Algorithms"
+            })
+            .end((err,res)=>{
+                res.statusCode.should.equal(200);
+                res.body.should.be.a('object');
+                done();
+            })
+        })
+    })
 
-1. Testcase:
+    //delete course
+    describe("DELETE /courses/:id",()=>{
+        it("it should delete course",(done)=>{
+            chai
+            .request(app)
+            .delete("/courses/:id")
+            .end((err,res)=>{
+                res.statusCode.should.equal(200);
+                res.body.should.be.a('object');
+                done();
+            })
+        })
+    })
+
+})
+```
+
+Here also, we have taken some testcases which are listed below along with their output.
+
+1. Testcase:(Valid Course in course adding):
 
 ```
 courseName: “course#1”
@@ -150,7 +208,7 @@ Test Result:
 ![image](https://user-images.githubusercontent.com/75557009/233434779-96b6512d-6583-4cb9-a6ef-1fac0bd81b7b.png)
 This test case is valid as it doesn't shows any error.
 
-2. Testcase:
+2. Testcase(Invalid course in course adding):
 
 ```
 courseName: “”
@@ -161,5 +219,41 @@ Test Result:
 
 ![image](https://user-images.githubusercontent.com/75557009/233435354-02e75bba-252e-41de-895a-96b7a5bb41bd.png)
 As we can see that it shows error while adding course beacuse of invalid courseName.
+
+3. Testcase(Valid Update Course):
+
+```
+courseName: "DSA",
+CourseDescription: "Data Structures and Algorithms"
+```
+
+Test Result:
+
+![image](https://user-images.githubusercontent.com/75557009/233438784-a912a7f8-6e67-48c9-b330-4b14688ce5db.png)
+This test case passed fully because we have updating existing course.
+
+4. Testcase(Invalid Update Course):
+
+```
+CourseName: "CSS"
+CourseDescription: "Casacding style sheets"
+```
+
+Test Results:
+
+![image](https://user-images.githubusercontent.com/75557009/233442714-f2cd83db-bd65-4e0c-8008-946c2966ac37.png)
+
+
+This test case doesn't pass because of course not existing.
+
+
+5. Testcase(Deletion of Course):
+
+![image](https://user-images.githubusercontent.com/75557009/233441634-0732b872-c6fd-4ad9-9620-7ccc309f1f2a.png)
+This test case passed succesfully because the course is existing to be deleted.
+
+
+
+
 
 
